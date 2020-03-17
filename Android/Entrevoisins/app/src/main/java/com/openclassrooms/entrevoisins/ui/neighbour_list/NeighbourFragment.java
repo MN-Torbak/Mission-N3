@@ -1,6 +1,7 @@
 package com.openclassrooms.entrevoisins.ui.neighbour_list;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -19,7 +20,11 @@ import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.openclassrooms.entrevoisins.ui.neighbour_list.UtilisateurActivity.VOISIN;
 
 
 public class NeighbourFragment extends Fragment {
@@ -27,20 +32,26 @@ public class NeighbourFragment extends Fragment {
     private NeighbourApiService mApiService;
     private List<Neighbour> mNeighbours;
     private RecyclerView mRecyclerView;
+    private SharedPreferences preferences;
+    private boolean onestdanslefragmentfavori;
 
 
     /**
      * Create and return a new instance
      * @return @{@link NeighbourFragment}
      */
-    public static NeighbourFragment newInstance() {
+    public static NeighbourFragment newInstance(boolean fragmentFavori) {
+        Bundle b = new Bundle();
+        b.putBoolean("FragmentFavori", fragmentFavori);
         NeighbourFragment fragment = new NeighbourFragment();
+        fragment.setArguments(b);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onestdanslefragmentfavori = getArguments().getBoolean("FragmentFavori");
         mApiService = DI.getNeighbourApiService();
     }
 
@@ -60,7 +71,22 @@ public class NeighbourFragment extends Fragment {
      */
     private void initList() {
         mNeighbours = mApiService.getNeighbours();
-        mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mNeighbours));
+        List<Neighbour> voisinFavoris = new ArrayList<>();
+        preferences = getActivity().getSharedPreferences(VOISIN, MODE_PRIVATE);
+        for (Neighbour voisinListé : mNeighbours) {
+            boolean isfavori = false;
+            isfavori = preferences.getBoolean("" + voisinListé.getId(), false);
+            if (isfavori) {
+                voisinFavoris.add(voisinListé);
+            }
+        }
+
+        if(onestdanslefragmentfavori){
+            mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(voisinFavoris));
+        }
+        else {
+            mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mNeighbours));
+        }
     }
 
     @Override
@@ -83,6 +109,7 @@ public class NeighbourFragment extends Fragment {
 
     /**
      * Fired if the user clicks on a delete button
+     *
      * @param event
      */
     @Subscribe
