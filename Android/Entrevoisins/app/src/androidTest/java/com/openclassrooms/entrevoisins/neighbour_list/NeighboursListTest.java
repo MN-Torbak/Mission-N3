@@ -25,7 +25,6 @@ import static com.openclassrooms.entrevoisins.utils.RecyclerViewItemCountAsserti
 import static org.hamcrest.core.IsNull.notNullValue;
 
 
-
 /**
  * Test class for list of neighbours
  */
@@ -68,22 +67,51 @@ public class NeighboursListTest {
         onView(ViewMatchers.withId(R.id.list_neighbours))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, new DeleteViewAction()));
         // Then : the number of element is 11
-        onView(ViewMatchers.withId(R.id.list_neighbours)).check(withItemCount(ITEMS_COUNT-1));
+        onView(ViewMatchers.withId(R.id.list_neighbours)).check(withItemCount(ITEMS_COUNT - 1));
     }
 
     /**
      * On vérifie que les détails soient lancés après un clique
      */
-   // @Test
-   // public void myNeighboursList_clickAction_shouldcontainsdetails() {
+    @Test
+    public void myNeighboursList_clickAction_shouldcontainsdetails() {
         // Etant donné que : on a une liste de voisins
-       // onView(ViewMatchers.withId(R.id.list_neighbours)).check(withItemCount(ITEMS_COUNT-1));
+        onView(ViewMatchers.withId(R.id.list_neighbours)).check(withItemCount(ITEMS_COUNT - 1));
         // Quand : on clique sur un voisin
-        //onView(ViewMatchers.withId(R.id.list_neighbours))
-               // .perform(RecyclerViewActions.actionOnItemAtPosition(1, new SelectViewAction()));
+        onView(ViewMatchers.withId(R.id.list_neighbours))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1, new SelectViewAction()));
         // Alors : on a les détails du voisin
-        //onView(ViewMatchers.withId(R.id.imageviewdetails))
-              //  .check(matches(isDisplayed()));
-    //}
+        onView(ViewMatchers.withId(R.id.imageviewdetails))
+                .check(matches(isDisplayed()));
+    }
+
+    /**
+     * On vérifie que le TextView indique le nom de l'utilisateur lors du démarrage de l'écran
+     */
+    @Test
+    public void myNeighbour_TextView_shouldcontainsnameuser_whenscreenstart() {
+        // Etant donné que : on a un voisin
+        onView(ViewMatchers.withId(R.id.activity_utilisateur));
+        // Quand : on a une TextView
+        onView(ViewMatchers.withId(R.id.app_bar));
+        // Alors : on a le nom de l'utilisateur dans la TextView
+        onView(ViewMatchers.withId(R.id.app_bar))
+                .check(VoisinName);
+    }
+
+    /**
+     * On vérifie que l'onglet Favori n'affiche que les voisins marqués comme favoris'
+     */
+    @Test
+    public void myNeighbourListFavori_shouldonlycontainsneighboursfavoris() {
+        // Etant donné que : on a une liste de voisins favoris
+        onView(ViewMatchers.withId(R.id.list_neighbours_favoris));
+        // Quand : on a un voisin non favori
+
+        // Alors : le voisin non favori n'apparaît pas dans la liste de favoris
+
+    }
+
+
 
 }
