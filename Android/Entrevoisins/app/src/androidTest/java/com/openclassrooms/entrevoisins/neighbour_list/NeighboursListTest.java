@@ -5,8 +5,11 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.RecyclerView;
 
 import com.openclassrooms.entrevoisins.R;
+import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.model.NeighbourFavori;
 import com.openclassrooms.entrevoisins.ui.neighbour_list.ListNeighbourActivity;
 import com.openclassrooms.entrevoisins.utils.DeleteViewAction;
 import com.openclassrooms.entrevoisins.utils.SelectViewAction;
@@ -16,14 +19,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressBack;
+import static junit.framework.TestCase.assertTrue;
+
+import java.util.List;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.hasMinimumChildCount;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.openclassrooms.entrevoisins.utils.RecyclerViewItemCountAssertion.withItemCount;
 import static org.hamcrest.core.IsNull.notNullValue;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
  * Test class for list of neighbours
@@ -87,31 +99,35 @@ public class NeighboursListTest {
 
     /**
      * On vérifie que le TextView indique le nom de l'utilisateur lors du démarrage de l'écran
+     * <p>
+     * test vérifiant qu’au démarrage de ce nouvel écran, le TextView indiquant que
+     * le nom de l’utilisateur en question est bien rempli
      */
     @Test
-    public void myNeighbour_TextView_shouldcontainsnameuser_whenscreenstart() {
-        // Etant donné que : on a un voisin
-        onView(ViewMatchers.withId(R.id.activity_utilisateur));
-        // Quand : on a une TextView
-        onView(ViewMatchers.withId(R.id.app_bar));
-        // Alors : on a le nom de l'utilisateur dans la TextView
-        onView(ViewMatchers.withId(R.id.app_bar))
-                .check(VoisinName);
+    public void myNeighbour_TextView_shouldcontainsnameuser_nameshouldmatches() {
+        String nomDuVoisin = "Jack";
+        onView(ViewMatchers.withId(R.id.list_neighbours))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(1, new SelectViewAction()));
+        // Alors : on a les détails du voisin
+        onView(ViewMatchers.withId(R.id.name)).check(matches(withText(nomDuVoisin)));
     }
-
     /**
      * On vérifie que l'onglet Favori n'affiche que les voisins marqués comme favoris'
      */
     @Test
-    public void myNeighbourListFavori_shouldonlycontainsneighboursfavoris() {
-        // Etant donné que : on a une liste de voisins favoris
-        onView(ViewMatchers.withId(R.id.list_neighbours_favoris));
-        // Quand : on a un voisin non favori
-
-        // Alors : le voisin non favori n'apparaît pas dans la liste de favoris
+    public void neighbourInFavoriteTabShouldBeInFavorites() throws Exception {
+        //Given on met Caroline dans les Favoris
+        onView(ViewMatchers.withId(R.id.list_neighbours))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, new SelectViewAction()));
+        //When on clique sur l'onglet Favori
+        onView(ViewMatchers.withId(R.id.fab))
+                .perform(click())
+                .perform(pressBack());
+        onView(ViewMatchers.withId(R.id.tabItem2))
+                .perform(click());
+        //Then on voit Caroline dans l'onglet Favori
+        onView(ViewMatchers.withId(R.id.list_favorite_neighbours)).check(withItemCount(1));
 
     }
-
-
 
 }

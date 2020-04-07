@@ -15,16 +15,13 @@ import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.events.DeleteNeighbourEvent;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.model.NeighbourFavori;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
-import static com.openclassrooms.entrevoisins.ui.neighbour_list.UtilisateurActivity.VOISIN;
 
 
 public class NeighbourFragment extends Fragment {
@@ -76,15 +73,7 @@ public class NeighbourFragment extends Fragment {
      */
     private void initList() {
         mNeighbours = mApiService.getNeighbours();
-        List<Neighbour> voisinFavoris = new ArrayList<>();
-        preferences = getActivity().getSharedPreferences(VOISIN, MODE_PRIVATE);
-        for (Neighbour voisinListé : mNeighbours) {
-            boolean isfavori = false;
-            isfavori = preferences.getBoolean("" + voisinListé.getId(), false);
-            if (isfavori) {
-                voisinFavoris.add(voisinListé);
-            }
-        }
+        List<Neighbour> voisinFavoris = NeighbourFavori.getNeighbourFavori(getContext());
 
         if(onestdanslefragmentfavori){
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(voisinFavoris));

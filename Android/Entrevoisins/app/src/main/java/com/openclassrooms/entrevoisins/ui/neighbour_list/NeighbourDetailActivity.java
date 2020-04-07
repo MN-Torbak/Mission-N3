@@ -12,8 +12,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.model.NeighbourFavori;
 
-public class UtilisateurActivity extends AppCompatActivity {
+import java.util.List;
+
+public class NeighbourDetailActivity extends AppCompatActivity {
 
     Neighbour monVoisin;
     Long monVoisinID;
@@ -32,12 +35,16 @@ public class UtilisateurActivity extends AppCompatActivity {
     private SharedPreferences Preferences;
     public static final String VOISIN = "voisin";
 
+    public static boolean isFavori(Neighbour voisin, List<Neighbour> voisinsFavoris) {
+        return voisinsFavoris.contains(voisin);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utilisateur);
 
-        Preferences = getSharedPreferences(VOISIN,MODE_PRIVATE);
+        Preferences = getSharedPreferences(VOISIN, MODE_PRIVATE);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
@@ -49,13 +56,13 @@ public class UtilisateurActivity extends AppCompatActivity {
             monVoisinAboutMe = b.getString("aboutMe");
         }
 
-        isfavori = Preferences.getBoolean("" + monVoisinID, false);
+        monVoisin = new Neighbour(monVoisinID, monVoisinName, monVoisinAvatarUrl, monVoisinAdress, monVoisinPhoneNumber, monVoisinAboutMe);
+
+        isfavori = isFavori(monVoisin, NeighbourFavori.getNeighbourFavori(this));
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (isfavori) {
             fab.setImageResource(R.drawable.ic_star_white_24dp);
         }
-
-        monVoisin = new Neighbour(monVoisinID, monVoisinName, monVoisinAvatarUrl, monVoisinAdress, monVoisinPhoneNumber, monVoisinAboutMe);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(monVoisinName);

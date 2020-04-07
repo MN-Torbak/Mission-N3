@@ -2,6 +2,8 @@ package com.openclassrooms.entrevoisins.service;
 
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.model.NeighbourFavori;
+import com.openclassrooms.entrevoisins.ui.neighbour_list.NeighbourDetailActivity;
 
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Before;
@@ -9,8 +11,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -42,12 +46,25 @@ public class NeighbourServiceTest {
     }
 
     @Test
-    public void getNeighbourInFavoriFragmentWithSuccess() {
-        List<Neighbour> neighboursFavori = service.getNeighboursFavori();
-        Neighbour neighbourToGetInFavoriFragment = service.getNeighbours().get(0);
-        neighboursFavori.add(neighbourToGetInFavoriFragment);
-        assertThat(service.getNeighboursFavori().contains(neighbourToGetInFavoriFragment));
+    public void favoriteNeighbourShouldBeInFavorites() {
+        //Given
+        Neighbour jean = new Neighbour(0L,"Jean","url","address", "0102030405","RAS");
+        List<Neighbour> voisinsFavoris = new ArrayList<>();
+        //When
+        voisinsFavoris.add(jean);
+        //Then
+        assertTrue(NeighbourDetailActivity.isFavori(jean,voisinsFavoris));
     }
 
+    @Test
+    public void neighbourShouldNotBeInFavorites() {
+        //Given
+        Neighbour jean = new Neighbour(0L,"Jean","url","address", "0102030405","RAS");
+        List<Neighbour> voisinsFavoris = new ArrayList<>();
+        //When
+
+        //Then
+        assertFalse(NeighbourDetailActivity.isFavori(jean,voisinsFavoris));
+    }
 
 }
