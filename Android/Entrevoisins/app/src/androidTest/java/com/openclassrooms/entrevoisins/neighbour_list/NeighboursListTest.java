@@ -121,9 +121,10 @@ public class NeighboursListTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, new SelectViewAction()));
         //When on clique sur l'onglet Favori
         onView(ViewMatchers.withId(R.id.fab))
-                .perform(click())
+                .perform(click());
+        onView(ViewMatchers.withId(R.id.fab))
                 .perform(pressBack());
-        onView(ViewMatchers.withId(R.id.tabItem2))
+        onView(ViewMatchers.withText(R.string.tab_favorites_title))
                 .perform(click());
         //Then on voit Caroline dans l'onglet Favori
         onView(ViewMatchers.withId(R.id.list_favorite_neighbours)).check(withItemCount(1));
