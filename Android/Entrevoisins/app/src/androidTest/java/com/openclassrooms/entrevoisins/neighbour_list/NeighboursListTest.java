@@ -124,6 +124,16 @@ public class NeighboursListTest {
                 .perform(click());
         onView(ViewMatchers.withId(R.id.fab))
                 .perform(pressBack());
+        try {
+            mActivityRule.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mActivity.recreate();
+                }
+            });
+        }catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
         onView(ViewMatchers.withText(R.string.tab_favorites_title))
                 .perform(click());
         //Then on voit Caroline dans l'onglet Favori
