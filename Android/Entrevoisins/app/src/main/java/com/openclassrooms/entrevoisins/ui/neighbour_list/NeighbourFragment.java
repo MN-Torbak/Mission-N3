@@ -16,11 +16,13 @@ import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.events.DeleteNeighbourEvent;
 import com.openclassrooms.entrevoisins.model.Neighbour;
 import com.openclassrooms.entrevoisins.model.NeighbourFavori;
+import com.openclassrooms.entrevoisins.service.DummyNeighbourApiService;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,6 +37,7 @@ public class NeighbourFragment extends Fragment {
 
     /**
      * Create and return a new instance
+     *
      * @return @{@link NeighbourFragment}
      */
     public static NeighbourFragment newInstance(boolean fragmentFavori) {
@@ -56,9 +59,9 @@ public class NeighbourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view;
-        if(onestdanslefragmentfavori){
+        if (onestdanslefragmentfavori) {
             view = inflater.inflate(R.layout.fragment_favorite_neighbour_list, container, false);
-        }else{
+        } else {
             view = inflater.inflate(R.layout.fragment_neighbour_list, container, false);
         }
         Context context = view.getContext();
@@ -73,14 +76,25 @@ public class NeighbourFragment extends Fragment {
      */
     private void initList() {
         mNeighbours = mApiService.getNeighbours();
-        List<Neighbour> voisinFavoris = NeighbourFavori.getNeighbourFavori(getContext());
+        preferences = getContext().getSharedPreferences(NeighbourDetailActivity.VOISIN, Context.MODE_PRIVATE);
+        List<Neighbour> voisinFavoris = getNeighboursFavori(preferences);
 
-        if(onestdanslefragmentfavori){
+        if (onestdanslefragmentfavori) {
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(voisinFavoris));
-        }
-        else {
+        } else {
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mNeighbours));
         }
+    }
+
+    public static List<Neighbour> getNeighboursFavori(SharedPreferences sharedPreferences) {
+        List favoris = new ArrayList();
+        DummyNeighbourApiService Api = new DummyNeighbourApiService();
+        for (Neighbour neighbour : Api.getNeighbours()) {
+            if (NeighbourDetailActivity.isFavori(neighbour.getId(), sharedPreferences)) {
+                favoris.add(neighbour);
+            }
+        }
+        return favoris;
     }
 
     @Override

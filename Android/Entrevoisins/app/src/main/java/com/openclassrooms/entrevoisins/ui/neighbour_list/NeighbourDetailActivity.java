@@ -1,5 +1,6 @@
 package com.openclassrooms.entrevoisins.ui.neighbour_list;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +14,9 @@ import com.bumptech.glide.Glide;
 import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.model.Neighbour;
 import com.openclassrooms.entrevoisins.model.NeighbourFavori;
+import com.openclassrooms.entrevoisins.service.DummyNeighbourApiService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NeighbourDetailActivity extends AppCompatActivity {
@@ -35,8 +38,14 @@ public class NeighbourDetailActivity extends AppCompatActivity {
     private SharedPreferences Preferences;
     public static final String VOISIN = "voisin";
 
-    public static boolean isFavori(Neighbour voisin, List<Neighbour> voisinsFavoris) {
-        return voisinsFavoris.contains(voisin);
+    public static boolean isFavori(long id, SharedPreferences sharedPreferences) {
+        boolean isfavori = sharedPreferences.getBoolean("" + id, false);
+        return isfavori;
+    }
+
+    public static Neighbour getNeighbourFromBundle(Bundle b) {
+        Neighbour neighbour = new Neighbour(b.getLong("id"), b.getString("name"), b.getString("avatarUrl"), b.getString("adress"), b.getString("phoneNumber"), b.getString("aboutMe"));
+        return neighbour;
     }
 
     @Override
@@ -47,25 +56,16 @@ public class NeighbourDetailActivity extends AppCompatActivity {
         Preferences = getSharedPreferences(VOISIN, MODE_PRIVATE);
 
         Bundle b = getIntent().getExtras();
-        if (b != null) {
-            monVoisinID = b.getLong("id");
-            monVoisinName = b.getString("name");
-            monVoisinAvatarUrl = b.getString("avatarUrl");
-            monVoisinAdress = b.getString("adress");
-            monVoisinPhoneNumber = b.getString("phoneNumber");
-            monVoisinAboutMe = b.getString("aboutMe");
-        }
+        monVoisin = getNeighbourFromBundle(b);
 
-        monVoisin = new Neighbour(monVoisinID, monVoisinName, monVoisinAvatarUrl, monVoisinAdress, monVoisinPhoneNumber, monVoisinAboutMe);
-
-        isfavori = isFavori(monVoisin, NeighbourFavori.getNeighbourFavori(this));
+        isfavori = isFavori(monVoisin.getId(), Preferences);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (isfavori) {
             fab.setImageResource(R.drawable.ic_star_white_24dp);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(monVoisinName);
+        toolbar.setTitle(monVoisin.getName());
         setSupportActionBar(toolbar);
 
         ImageView avatarimageview = findViewById(R.id.imageviewdetails);
@@ -76,16 +76,16 @@ public class NeighbourDetailActivity extends AppCompatActivity {
                 .into(avatarimageview);
 
         name = findViewById(R.id.name);
-        name.setText(monVoisinName);
+        name.setText(monVoisin.getName());
 
         adress = findViewById(R.id.adress);
-        adress.setText(monVoisinAdress);
+        adress.setText(monVoisin.getAddress());
 
         phone = findViewById(R.id.textphone);
-        phone.setText(monVoisinPhoneNumber);
+        phone.setText(monVoisin.getPhoneNumber());
 
         aboutMe = findViewById(R.id.aboutMe);
-        aboutMe.setText(monVoisinAboutMe);
+        aboutMe.setText(monVoisin.getAboutMe());
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,11 +93,11 @@ public class NeighbourDetailActivity extends AppCompatActivity {
                 if (isfavori) {
                     isfavori = false;
                     fab.setImageResource(R.drawable.ic_star_border_white_24dp);
-                    Preferences.edit().putBoolean("" + monVoisinID, false).apply();
+                    Preferences.edit().putBoolean("" + monVoisin.getId(), false).apply();
                 } else {
                     isfavori = true;
                     fab.setImageResource(R.drawable.ic_star_white_24dp);
-                    Preferences.edit().putBoolean("" + monVoisinID, true).apply();
+                    Preferences.edit().putBoolean("" + monVoisin.getId(), true).apply();
                 }
             }
         });

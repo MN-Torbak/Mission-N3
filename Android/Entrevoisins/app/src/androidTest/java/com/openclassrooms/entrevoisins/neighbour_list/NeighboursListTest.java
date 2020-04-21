@@ -100,7 +100,7 @@ public class NeighboursListTest {
     /**
      * On vérifie que le TextView indique le nom de l'utilisateur lors du démarrage de l'écran
      * <p>
-     * test vérifiant qu’au démarrage de ce nouvel écran, le TextView indiquant que
+     * test vérifiant qu’au démarrage de ce nouvel écran, le TextView indique que
      * le nom de l’utilisateur en question est bien rempli
      */
     @Test
@@ -111,23 +111,36 @@ public class NeighboursListTest {
         // Alors : on a les détails du voisin
         onView(ViewMatchers.withId(R.id.name)).check(matches(withText(nomDuVoisin)));
     }
+
     /**
      * On vérifie que l'onglet Favori n'affiche que les voisins marqués comme favoris'
      */
     @Test
     public void neighbourInFavoriteTabShouldBeInFavorites() throws Exception {
-        //Given on met Caroline dans les Favoris
+        //Given on met un voisin dans les Favoris
         onView(ViewMatchers.withId(R.id.list_neighbours))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, new SelectViewAction()));
-        //When on clique sur l'onglet Favori
         onView(ViewMatchers.withId(R.id.fab))
                 .perform(click())
                 .perform(pressBack());
-        onView(ViewMatchers.withId(R.id.tabItem2))
+        restartApp();
+        //When on clique sur l'onglet Favori
+        onView(ViewMatchers.withText(R.string.tab_favorites_title))
                 .perform(click());
-        //Then on voit Caroline dans l'onglet Favori
+        //Then on voit un voisin dans l'onglet Favori
         onView(ViewMatchers.withId(R.id.list_favorite_neighbours)).check(withItemCount(1));
-
     }
 
+    public void restartApp() {
+        try {
+            mActivityRule.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mActivity.recreate();
+                }
+            });
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 }
