@@ -2,6 +2,7 @@ package com.openclassrooms.entrevoisins.service;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.model.Neighbour;
@@ -53,17 +54,6 @@ public class NeighbourServiceTest {
         Neighbour neighbourToDelete = service.getNeighbours().get(0);
         service.deleteNeighbour(neighbourToDelete);
         assertFalse(service.getNeighbours().contains(neighbourToDelete));
-    }
-
-    @Test
-    public void neighbourShouldContainsDetails() {
-        //Given
-        Neighbour neighbourToCheck = service.getNeighbours().get(0);
-        Long idneighbourtocheck = neighbourToCheck.getId();
-        //When
-        mockBundle.putLong("id", idneighbourtocheck);
-        //Then
-        assertTrue(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getId() == idneighbourtocheck);
     }
 
     @Test

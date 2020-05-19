@@ -51,7 +51,7 @@ public class MyNeighbourRecyclerViewAdapter extends RecyclerView.Adapter<MyNeigh
         holder.mNeighbourName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent UtilisateurActivity = new Intent(holder.mNeighbourName.getContext(), NeighbourDetailActivity.class);
+                Intent UtilisateurActivityIntent = new Intent(holder.mNeighbourName.getContext(), NeighbourDetailActivity.class);
                 Bundle b = new Bundle();
                 b.putLong("id", neighbour.getId());
                 b.putString("name", neighbour.getName());
@@ -59,8 +59,8 @@ public class MyNeighbourRecyclerViewAdapter extends RecyclerView.Adapter<MyNeigh
                 b.putString("adress", neighbour.getAddress());
                 b.putString("phoneNumber", neighbour.getPhoneNumber());
                 b.putString("aboutMe", neighbour.getAboutMe());
-                UtilisateurActivity.putExtras(b);
-                holder.mNeighbourName.getContext().startActivity(UtilisateurActivity);
+                UtilisateurActivityIntent.putExtras(b);
+                holder.mNeighbourName.getContext().startActivity(UtilisateurActivityIntent);
             }
         });
         holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
