@@ -25,6 +25,9 @@ public class Neighbour {
     /** About me */
     private String aboutMe;
 
+    /** Am I a favorite  */
+    private boolean favorite;
+
     /**
      * Constructor
      * @param id
@@ -32,13 +35,14 @@ public class Neighbour {
      * @param avatarUrl
      */
     public Neighbour(long id, String name, String avatarUrl, String address,
-                     String phoneNumber, String aboutMe) {
+                     String phoneNumber, String aboutMe, boolean favorite) {
         this.id = id;
         this.name = name;
         this.avatarUrl = avatarUrl;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.aboutMe = aboutMe;
+        this.favorite = favorite;
     }
 
     public long getId() {
@@ -87,16 +91,30 @@ public class Neighbour {
         this.aboutMe = aboutMe;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Neighbour neighbour = (Neighbour) o;
-        return Objects.equals(id, neighbour.id);
+        return id == neighbour.id &&
+                favorite == neighbour.favorite &&
+                Objects.equals(name, neighbour.name) &&
+                Objects.equals(avatarUrl, neighbour.avatarUrl) &&
+                Objects.equals(address, neighbour.address) &&
+                Objects.equals(phoneNumber, neighbour.phoneNumber) &&
+                Objects.equals(aboutMe, neighbour.aboutMe);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name, avatarUrl, address, phoneNumber, aboutMe, favorite);
     }
 }

@@ -76,7 +76,7 @@ public class NeighbourFragment extends Fragment {
     private void initList() {
         mNeighbours = mApiService.getNeighbours();
         preferences = getContext().getSharedPreferences(NeighbourDetailActivity.VOISIN, Context.MODE_PRIVATE);
-        List<Neighbour> voisinFavoris = getNeighboursFavori(preferences);
+        List<Neighbour> voisinFavoris = getNeighboursFavori();
 
         if (onestdanslefragmentfavori) {
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(voisinFavoris));
@@ -85,15 +85,15 @@ public class NeighbourFragment extends Fragment {
         }
     }
 
-    public static List<Neighbour> getNeighboursFavori(SharedPreferences sharedPreferences) {
-        List favoris = new ArrayList();
+    public static List<Neighbour> getNeighboursFavori() {
+        List<Neighbour> favorites = new ArrayList<>();
         DummyNeighbourApiService Api = new DummyNeighbourApiService();
         for (Neighbour neighbour : Api.getNeighbours()) {
-            if (NeighbourDetailActivity.isFavori(neighbour.getId(), sharedPreferences)) {
-                favoris.add(neighbour);
+            if (neighbour.isFavorite()) {
+                favorites.add(neighbour);
             }
         }
-        return favoris;
+        return favorites;
     }
 
     @Override

@@ -11,7 +11,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.openclassrooms.entrevoisins.R;
+import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.service.NeighbourApiService;
+
+import java.util.List;
 
 public class NeighbourDetailActivity extends AppCompatActivity {
 
@@ -24,29 +28,46 @@ public class NeighbourDetailActivity extends AppCompatActivity {
     ImageView avatarimageview;
     boolean isfavori = false;
 
-    private SharedPreferences Preferences;
     public static final String VOISIN = "voisin";
+
+    private NeighbourApiService mApiService;
 
     public static boolean isFavori(long id, SharedPreferences sharedPreferences) {
         return sharedPreferences.getBoolean("" + id, false);
     }
 
     public static Neighbour getNeighbourFromBundle(Bundle monbundle) {
-        return new Neighbour(monbundle.getLong("id"), monbundle.getString("name"), monbundle.getString("avatarUrl"), monbundle.getString("adress"), monbundle.getString("phoneNumber"), monbundle.getString("aboutMe"));
+        return new Neighbour(monbundle.getLong("id"),
+                monbundle.getString("name"),
+                monbundle.getString("avatarUrl"),
+                monbundle.getString("adress"),
+                monbundle.getString("phoneNumber"),
+                monbundle.getString("aboutMe"),
+                monbundle.getBoolean("isFavorite"));
+    }
+
+    public static long getNeighbourIdFromBundle(Bundle monBundle) {
+        return monBundle.getLong("id");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utilisateur);
+        mApiService = DI.getNeighbourApiService();
 
-        Preferences = getSharedPreferences(VOISIN, MODE_PRIVATE);
         if (getIntent().getExtras() == null) {
             finish();
         } else {
-            monVoisin = getNeighbourFromBundle(getIntent().getExtras());
+            long idVoisin = getNeighbourIdFromBundle(getIntent().getExtras());
+            List<Neighbour> neighbours = mApiService.getNeighbours();
+            for(Neighbour neighbour : neighbours){
+                if(neighbour.getId() == idVoisin){
+                    monVoisin = neighbour;
+                }
+            }
         }
-        isfavori = isFavori(monVoisin.getId(), Preferences);
+        isfavori = monVoisin.isFavorite();//isFavori(monVoisin.getId(), Preferences);
         avatarimageview = findViewById(R.id.imageviewdetails);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -81,11 +102,9 @@ public class NeighbourDetailActivity extends AppCompatActivity {
                 if (isfavori) {
                     isfavori = false;
                     fab.setImageResource(R.drawable.ic_star_border_white_24dp);
-                    Preferences.edit().putBoolean("" + monVoisin.getId(), false).apply();
                 } else {
                     isfavori = true;
                     fab.setImageResource(R.drawable.ic_star_white_24dp);
-                    Preferences.edit().putBoolean("" + monVoisin.getId(), true).apply();
                 }
             }
         });

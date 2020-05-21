@@ -123,7 +123,7 @@ public class NeighbourServiceTest {
     @Test
     public void NeighbourIsFavori() {
         //Given
-        Neighbour Favori = new Neighbour(2, "Favori", "url", "address", "0102030405", "RAS");
+        Neighbour Favori = new Neighbour(2, "Favori", "url", "address", "0102030405", "RAS", false);
         //When
         createmockSharedPreferences();
         //Then
@@ -133,7 +133,7 @@ public class NeighbourServiceTest {
     @Test
     public void NeighbourIsNotFavori() {
         //Given
-        Neighbour Favori = new Neighbour(1, "Favori", "url", "address", "0102030405", "RAS");
+        Neighbour Favori = new Neighbour(1, "Favori", "url", "address", "0102030405", "RAS",true);
         //When
         createmockSharedPreferences();
         //Then
@@ -145,7 +145,7 @@ public class NeighbourServiceTest {
         //When
         createmockSharedPreferences();
         //Then
-        assertEquals(1, NeighbourFragment.getNeighboursFavori(mockSharedPreferences).size());
+        assertEquals(1, NeighbourFragment.getNeighboursFavori().size());
     }
 }
 
