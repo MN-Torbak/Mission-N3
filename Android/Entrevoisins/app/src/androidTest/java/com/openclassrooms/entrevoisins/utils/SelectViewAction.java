@@ -21,7 +21,7 @@ public class SelectViewAction implements ViewAction {
 
     @Override
     public void perform(UiController uiController, View view) {
-        View button = view.findViewById(R.id.item_list_name);
+        View button = view.findViewById(R.id.item_list_container);
         // Maybe check for null
         button.performClick();
     }

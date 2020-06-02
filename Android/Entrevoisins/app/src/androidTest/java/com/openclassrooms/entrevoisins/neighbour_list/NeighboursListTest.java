@@ -86,8 +86,6 @@ public class NeighboursListTest {
      */
     @Test
     public void myNeighboursList_clickAction_shouldcontainsdetails() {
-        // Etant donné que : on a une liste de voisins
-        onView(ViewMatchers.withId(R.id.list_neighbours)).check(withItemCount(ITEMS_COUNT - 1));
         // Quand : on clique sur un voisin
         onView(ViewMatchers.withId(R.id.list_neighbours))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, new SelectViewAction()));
@@ -105,9 +103,10 @@ public class NeighboursListTest {
     @Test
     public void myNeighbour_TextView_shouldcontainsnameuser_nameshouldmatches() {
         String nomDuVoisin = "Jack";
+        // Quand : on clique sur un voisin
         onView(ViewMatchers.withId(R.id.list_neighbours))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1, new SelectViewAction()));
-        // Alors : on a les détails du voisin
+        // Alors : la TextView du nom du voisin affiche le bon nom de voisin
         onView(ViewMatchers.withId(R.id.name)).check(matches(withText(nomDuVoisin)));
     }
 
@@ -116,17 +115,16 @@ public class NeighboursListTest {
      */
     @Test
     public void neighbourInFavoriteTabShouldBeInFavorites() throws Exception {
-        //Given on met un voisin dans les Favoris
+        //Etant donné que: on met un voisin dans les Favoris
         onView(ViewMatchers.withId(R.id.list_neighbours))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, new SelectViewAction()));
         onView(ViewMatchers.withId(R.id.fab))
                 .perform(click())
                 .perform(pressBack());
-        restartApp();
-        //When on clique sur l'onglet Favori
+        //Quand : on clique sur l'onglet Favori
         onView(ViewMatchers.withText(R.string.tab_favorites_title))
                 .perform(click());
-        //Then on voit un voisin dans l'onglet Favori
+        //Alors : on voit un voisin dans l'onglet Favori
         onView(ViewMatchers.withId(R.id.list_favorite_neighbours)).check(withItemCount(1));
     }
 

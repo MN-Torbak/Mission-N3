@@ -1,6 +1,5 @@
 package com.openclassrooms.entrevoisins.ui.neighbour_list;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,83 +10,88 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.openclassrooms.entrevoisins.R;
+import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.service.NeighbourApiService;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class NeighbourDetailActivity extends AppCompatActivity {
 
     Neighbour monVoisin;
 
+    @BindView(R.id.name)
     TextView nameTextView;
+    @BindView(R.id.adress)
     TextView adressTextView;
+    @BindView(R.id.textphone)
     TextView phoneTextView;
+    @BindView(R.id.aboutMe)
     TextView aboutMeTextView;
-    ImageView avatarimageview;
+    @BindView(R.id.imageviewdetails)
+    ImageView avatarImageView;
+    @BindView((R.id.toolbar))
+    Toolbar titleToolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton favoriteFab;
+
     boolean isfavori = false;
 
-    private SharedPreferences Preferences;
-    public static final String VOISIN = "voisin";
-
-    public static boolean isFavori(long id, SharedPreferences sharedPreferences) {
-        return sharedPreferences.getBoolean("" + id, false);
-    }
-
-    public static Neighbour getNeighbourFromBundle(Bundle monbundle) {
-        return new Neighbour(monbundle.getLong("id"), monbundle.getString("name"), monbundle.getString("avatarUrl"), monbundle.getString("adress"), monbundle.getString("phoneNumber"), monbundle.getString("aboutMe"));
-    }
+    private NeighbourApiService mApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utilisateur);
+        ButterKnife.bind(this);
+        mApiService = DI.getNeighbourApiService();
 
-        Preferences = getSharedPreferences(VOISIN, MODE_PRIVATE);
         if (getIntent().getExtras() == null) {
             finish();
         } else {
-            monVoisin = getNeighbourFromBundle(getIntent().getExtras());
+            monVoisin = getIntent().getExtras().getParcelable("neighbour");
         }
-        isfavori = isFavori(monVoisin.getId(), Preferences);
-        avatarimageview = findViewById(R.id.imageviewdetails);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        isfavori = monVoisin.isFavorite();
         if (isfavori) {
-            fab.setImageResource(R.drawable.ic_star_white_24dp);
+            favoriteFab.setImageResource(R.drawable.ic_star_white_24dp);
         }
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(monVoisin.getName());
-        setSupportActionBar(toolbar);
+        titleToolbar.setTitle(monVoisin.getName());
+        setSupportActionBar(titleToolbar);
 
         Glide.with(this)
                 .load(monVoisin.getAvatarUrl())
                 .centerCrop()
-                .into(avatarimageview);
+                .into(avatarImageView);
 
-        nameTextView = findViewById(R.id.name);
         nameTextView.setText(monVoisin.getName());
-
-        adressTextView = findViewById(R.id.adress);
         adressTextView.setText(monVoisin.getAddress());
-
-        phoneTextView = findViewById(R.id.textphone);
         phoneTextView.setText(monVoisin.getPhoneNumber());
-
-        aboutMeTextView = findViewById(R.id.aboutMe);
         aboutMeTextView.setText(monVoisin.getAboutMe());
+    }
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isfavori) {
-                    isfavori = false;
-                    fab.setImageResource(R.drawable.ic_star_border_white_24dp);
-                    Preferences.edit().putBoolean("" + monVoisin.getId(), false).apply();
-                } else {
-                    isfavori = true;
-                    fab.setImageResource(R.drawable.ic_star_white_24dp);
-                    Preferences.edit().putBoolean("" + monVoisin.getId(), true).apply();
-                }
+    @OnClick(R.id.fab)
+    public void submit(View view) {
+        if (isfavori) {
+            isfavori = false;
+            favoriteFab.setImageResource(R.drawable.ic_star_border_white_24dp);
+            setFavoriteInService(false, monVoisin, mApiService.getNeighbours());
+        } else {
+            isfavori = true;
+            favoriteFab.setImageResource(R.drawable.ic_star_white_24dp);
+            setFavoriteInService(true, monVoisin, mApiService.getNeighbours());
+        }
+    }
+    public static void setFavoriteInService(boolean isFavorite, Neighbour neighbour, List<Neighbour> neighbours) {
+        for (Neighbour listNeighbour : neighbours) {
+            if (neighbour.getId() == listNeighbour.getId()) {
+                listNeighbour.setFavorite(isFavorite);
             }
-        });
+        }
     }
 }

@@ -19,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.openclassrooms.entrevoisins.service.DummyNeighbourGenerator.DUMMY_NEIGHBOURS;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,10 +33,6 @@ import static org.mockito.Mockito.when;
 public class NeighbourServiceTest {
 
     private NeighbourApiService service;
-    @Mock
-    private Bundle mockBundle;
-    @Mock
-    private SharedPreferences mockSharedPreferences;
 
     @Before
     public void setup() {
@@ -45,7 +42,7 @@ public class NeighbourServiceTest {
     @Test
     public void getNeighboursWithSuccess() {
         List<Neighbour> neighbours = service.getNeighbours();
-        List<Neighbour> expectedNeighbours = DummyNeighbourGenerator.DUMMY_NEIGHBOURS;
+        List<Neighbour> expectedNeighbours = DUMMY_NEIGHBOURS;
         assertThat(neighbours, IsIterableContainingInAnyOrder.containsInAnyOrder(expectedNeighbours.toArray()));
     }
 
@@ -57,95 +54,53 @@ public class NeighbourServiceTest {
     }
 
     @Test
-    public void neighbourTestingID() {
+    public void setFavoriteInService() {
+        //Given
+        Neighbour favori = service.getNeighbours().get(0);
         //When
-        createmockBundle();
+        NeighbourDetailActivity.setFavoriteInService(true, favori, service.getNeighbours());
         //Then
-        assertEquals(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getId(), 1L);
+        assertTrue(service.getNeighbours().get(0).isFavorite());
     }
 
     @Test
-    public void neighbourTestingName() {
+    public void setNoFavoriteInService() {
+        //Given
+        Neighbour favori = service.getNeighbours().get(0);
         //When
-        createmockBundle();
+        NeighbourDetailActivity.setFavoriteInService(false, favori, service.getNeighbours());
         //Then
-        assertEquals(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getName(), "Jean");
-    }
-
-    @Test
-    public void neighbourTestingAvatarUrl() {
-        //When
-        createmockBundle();
-        //Then
-        assertEquals(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getAvatarUrl(), "un avatar");
-    }
-
-    @Test
-    public void neighbourTestingAdress() {
-        //When
-        createmockBundle();
-        //Then
-        assertEquals(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getAddress(), "10 rue du poulet");
-    }
-
-    @Test
-    public void neighbourTestingPhoneNumber() {
-        //When
-        createmockBundle();
-        //Then
-        assertEquals(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getPhoneNumber(), "0102030405");
-    }
-
-    @Test
-    public void neighbourTestingAboutMe() {
-        //When
-        createmockBundle();
-        //Then
-        assertEquals(NeighbourDetailActivity.getNeighbourFromBundle(mockBundle).getAboutMe(), "salut c'est moi");
-    }
-
-    public void createmockBundle() {
-        when(mockBundle.getLong("id")).thenReturn(1L);
-        when(mockBundle.getString("name")).thenReturn("Jean");
-        when(mockBundle.getString("avatarUrl")).thenReturn("un avatar");
-        when(mockBundle.getString("adress")).thenReturn("10 rue du poulet");
-        when(mockBundle.getString("phoneNumber")).thenReturn("0102030405");
-        when(mockBundle.getString("aboutMe")).thenReturn("salut c'est moi");
-    }
-
-    public void createmockSharedPreferences() {
-
-        when(mockSharedPreferences.getBoolean("1", false)).thenReturn(false);
-        when(mockSharedPreferences.getBoolean("2", false)).thenReturn(true);
-
+        assertFalse(service.getNeighbours().get(0).isFavorite());
     }
 
     @Test
     public void NeighbourIsFavori() {
         //Given
-        Neighbour Favori = new Neighbour(2, "Favori", "url", "address", "0102030405", "RAS");
+        Neighbour favori = service.getNeighbours().get(0);
         //When
-        createmockSharedPreferences();
+        favori.setFavorite(true);
         //Then
-        assertTrue(NeighbourDetailActivity.isFavori(Favori.getId(), mockSharedPreferences));
+        assertTrue(favori.isFavorite());
     }
 
     @Test
     public void NeighbourIsNotFavori() {
         //Given
-        Neighbour Favori = new Neighbour(1, "Favori", "url", "address", "0102030405", "RAS");
+        Neighbour notFavori = service.getNeighbours().get(0);
         //When
-        createmockSharedPreferences();
+        notFavori.setFavorite(false);
         //Then
-        assertFalse(NeighbourDetailActivity.isFavori(Favori.getId(), mockSharedPreferences));
+        assertFalse(notFavori.isFavorite());
     }
 
     @Test
     public void NeighbourListFavori() {
+        //Given
+        Neighbour favori = service.getNeighbours().get(0);
         //When
-        createmockSharedPreferences();
+        favori.setFavorite(true);
         //Then
-        assertEquals(1, NeighbourFragment.getNeighboursFavori(mockSharedPreferences).size());
+        assertTrue(NeighbourFragment.getNeighboursFavori(service.getNeighbours()).contains(favori));
     }
 }
 
