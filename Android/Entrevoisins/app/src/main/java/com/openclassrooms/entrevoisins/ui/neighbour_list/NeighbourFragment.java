@@ -1,7 +1,6 @@
 package com.openclassrooms.entrevoisins.ui.neighbour_list;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,7 +14,6 @@ import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.events.DeleteNeighbourEvent;
 import com.openclassrooms.entrevoisins.model.Neighbour;
-import com.openclassrooms.entrevoisins.service.DummyNeighbourApiService;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,7 +28,7 @@ public class NeighbourFragment extends Fragment {
     private NeighbourApiService mApiService;
     private List<Neighbour> mNeighbours;
     private RecyclerView mRecyclerView;
-    private boolean onestdanslefragmentfavori;
+    private boolean onEstDansLeFragmentFavori;
 
 
     /**
@@ -49,7 +47,7 @@ public class NeighbourFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onestdanslefragmentfavori = getArguments().getBoolean("FragmentFavori");
+        onEstDansLeFragmentFavori = getArguments().getBoolean("FragmentFavori");
         mApiService = DI.getNeighbourApiService();
     }
 
@@ -57,7 +55,7 @@ public class NeighbourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view;
-        if (onestdanslefragmentfavori) {
+        if (onEstDansLeFragmentFavori) {
             view = inflater.inflate(R.layout.fragment_favorite_neighbour_list, container, false);
         } else {
             view = inflater.inflate(R.layout.fragment_neighbour_list, container, false);
@@ -76,7 +74,7 @@ public class NeighbourFragment extends Fragment {
         mNeighbours = mApiService.getNeighbours();
         List<Neighbour> voisinFavoris = getNeighboursFavori(mNeighbours);
 
-        if (onestdanslefragmentfavori) {
+        if (onEstDansLeFragmentFavori) {
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(voisinFavoris));
         } else {
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mNeighbours));

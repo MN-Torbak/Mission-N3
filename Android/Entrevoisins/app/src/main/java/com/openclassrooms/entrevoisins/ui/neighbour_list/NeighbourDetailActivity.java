@@ -39,7 +39,7 @@ public class NeighbourDetailActivity extends AppCompatActivity {
     @BindView(R.id.fab)
     FloatingActionButton favoriteFab;
 
-    boolean isfavori = false;
+    boolean isFavorite = false;
 
     private NeighbourApiService mApiService;
 
@@ -56,8 +56,8 @@ public class NeighbourDetailActivity extends AppCompatActivity {
             monVoisin = getIntent().getExtras().getParcelable("neighbour");
         }
 
-        isfavori = monVoisin.isFavorite();
-        if (isfavori) {
+        isFavorite = monVoisin.isFavorite();
+        if (isFavorite) {
             favoriteFab.setImageResource(R.drawable.ic_star_white_24dp);
         }
 
@@ -77,12 +77,12 @@ public class NeighbourDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab)
     public void submit(View view) {
-        if (isfavori) {
-            isfavori = false;
+        if (isFavorite) {
+            isFavorite = false;
             favoriteFab.setImageResource(R.drawable.ic_star_border_white_24dp);
             setFavoriteInService(false, monVoisin, mApiService.getNeighbours());
         } else {
-            isfavori = true;
+            isFavorite = true;
             favoriteFab.setImageResource(R.drawable.ic_star_white_24dp);
             setFavoriteInService(true, monVoisin, mApiService.getNeighbours());
         }
