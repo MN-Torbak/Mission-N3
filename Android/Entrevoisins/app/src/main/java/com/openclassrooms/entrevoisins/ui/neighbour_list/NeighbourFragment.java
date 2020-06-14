@@ -72,7 +72,7 @@ public class NeighbourFragment extends Fragment {
      */
     private void initList() {
         mNeighbours = mApiService.getNeighbours();
-        List<Neighbour> voisinFavoris = getNeighboursFavori(mNeighbours);
+        List<Neighbour> voisinFavoris = mApiService.getNeighboursFavori();
 
         if (onEstDansLeFragmentFavori) {
             mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(voisinFavoris));
@@ -81,15 +81,15 @@ public class NeighbourFragment extends Fragment {
         }
     }
 
-    public static List<Neighbour> getNeighboursFavori(List<Neighbour> neighbours) {
-        List<Neighbour> favorites = new ArrayList<>();
-        for (Neighbour neighbour : neighbours) {
-            if (neighbour.isFavorite()) {
-                favorites.add(neighbour);
-            }
-        }
-        return favorites;
-    }
+    //public static List<Neighbour> getNeighboursFavori(List<Neighbour> neighbours) {
+    //    List<Neighbour> favorites = new ArrayList<>();
+    //    for (Neighbour neighbour : neighbours) {
+    //       if (neighbour.isFavorite()) {
+    //           favorites.add(neighbour);
+    //       }
+    //   }
+    //  return favorites;
+    //}
 
     @Override
     public void onResume() {

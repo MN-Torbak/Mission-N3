@@ -80,18 +80,20 @@ public class NeighbourDetailActivity extends AppCompatActivity {
         if (isFavorite) {
             isFavorite = false;
             favoriteFab.setImageResource(R.drawable.ic_star_border_white_24dp);
-            setFavoriteInService(false, monVoisin, mApiService.getNeighbours());
+            //setFavoriteInService(false, monVoisin, mApiService.getNeighbours());
+            mApiService.setFavoriteInService(false, monVoisin);
         } else {
             isFavorite = true;
             favoriteFab.setImageResource(R.drawable.ic_star_white_24dp);
-            setFavoriteInService(true, monVoisin, mApiService.getNeighbours());
+            //setFavoriteInService(true, monVoisin, mApiService.getNeighbours());
+            mApiService.setFavoriteInService(true, monVoisin);
         }
     }
-    public static void setFavoriteInService(boolean isFavorite, Neighbour neighbour, List<Neighbour> neighbours) {
-        for (Neighbour listNeighbour : neighbours) {
-            if (neighbour.getId() == listNeighbour.getId()) {
-                listNeighbour.setFavorite(isFavorite);
-            }
-        }
-    }
+    //public static void setFavoriteInService(boolean isFavorite, Neighbour neighbour, List<Neighbour> neighbours) {
+    //    for (Neighbour listNeighbour : neighbours) {
+    //        if (neighbour.getId() == listNeighbour.getId()) {
+    //            listNeighbour.setFavorite(isFavorite);
+    //        }
+    //    }
+    //}
 }

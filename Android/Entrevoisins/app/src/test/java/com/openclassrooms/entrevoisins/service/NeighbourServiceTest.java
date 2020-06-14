@@ -58,7 +58,7 @@ public class NeighbourServiceTest {
         //Given
         Neighbour favori = service.getNeighbours().get(0);
         //When
-        NeighbourDetailActivity.setFavoriteInService(true, favori, service.getNeighbours());
+        service.setFavoriteInService(true, favori);
         //Then
         assertTrue(service.getNeighbours().get(0).isFavorite());
     }
@@ -68,7 +68,7 @@ public class NeighbourServiceTest {
         //Given
         Neighbour favori = service.getNeighbours().get(0);
         //When
-        NeighbourDetailActivity.setFavoriteInService(false, favori, service.getNeighbours());
+        service.setFavoriteInService(false, favori);
         //Then
         assertFalse(service.getNeighbours().get(0).isFavorite());
     }
@@ -100,7 +100,7 @@ public class NeighbourServiceTest {
         //When
         favori.setFavorite(true);
         //Then
-        assertTrue(NeighbourFragment.getNeighboursFavori(service.getNeighbours()).contains(favori));
+        assertTrue(service.getNeighboursFavori().contains(favori));
     }
 }
 

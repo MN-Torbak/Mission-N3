@@ -87,9 +87,7 @@ public class Neighbour implements Parcelable {
         this.avatarUrl = avatarUrl;
     }
 
-    public String getAddress() {
-        return address;
-    }
+    public String getAddress() { return address; }
 
     public void setAddress(String address) {
         this.address = address;
